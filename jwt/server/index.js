@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt')
 require('dotenv').config()
 const loginController = require('./controllers/loginController')
 const registerController = require('./controllers/registerController')
+const { validateUser } = require('./models/users')
+const validateMiddleware = require('./middlewares/validateMiddleware')
 
 
 const app = express()
@@ -14,6 +16,6 @@ app.use(cors())
 app.use(express.json())
 mongoose.connect(process.env.MONGO_DB_CONNECTION_URL)
 
-app.post('/api/register', registerController)
+app.post('/api/register', [validateMiddleware(validateUser)], registerController)
 
 app.listen(PORT)

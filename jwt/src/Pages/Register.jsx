@@ -14,10 +14,8 @@ const Register = () => {
     const registerUser = async (e) => {
         e.preventDefault()
         Axios.post('http://localhost:5000/api/register', {name, email, password})
-        .then(res => {
-            console.log(res)
-        })
-        .catch(err => console.log('error: ' + err.response.data))
+        .then(res => setData(res.data))
+        .catch(err => setError(err.response.data))
     }
 
     return (
