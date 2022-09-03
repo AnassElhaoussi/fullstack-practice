@@ -5,20 +5,18 @@ const bcrypt = require('bcrypt')
 async function registerController(req, res) {
     // Getting the request body
     const { name, email, password } = req.body
-
-    // Hashing passwords
+    // Hashing user passwords
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
-
-    // creating a new instance of the current user
+    // Creating a new instance of the current user
     const user = new UserModel({ name, email, password: hashedPassword })
 
     try {
-        // saving the current user if the request fulfills
+        // Saving the current user on the db
         const savedUser = await user.save()
         res.status(200).send(savedUser)
     } catch (err) {
-        // Filtering error types 
+        // Filtering error types
         if (!name || !email || !password) return res.status(400).send('Credentials are not complete')
         else return res.status(400).send('Email is already in use')
     }
