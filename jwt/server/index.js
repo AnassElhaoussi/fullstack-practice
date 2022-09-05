@@ -18,6 +18,9 @@ mongoose.connect(process.env.MONGO_DB_CONNECTION_URL)
 
 app.post('/api/register', [validateMiddleware(validateUser)], registerController)
 app.post('/api/login', [validateMiddleware(validateUser)], loginController)
+app.get('/api/private', (req, res) => {
+    res.send('You entered the private route, congrats!')
+})
 
 
 app.listen(PORT)
