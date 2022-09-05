@@ -1,13 +1,12 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
-const bcrypt = require('bcrypt')
 require('dotenv').config()
 const loginController = require('./controllers/loginController')
 const registerController = require('./controllers/registerController')
 const { validateUser } = require('./models/users')
 const validateMiddleware = require('./middlewares/validateMiddleware')
-
+const getPrivate = require('./middlewares/getPrivate')
 
 const app = express()
 const PORT = 5000
@@ -18,7 +17,7 @@ mongoose.connect(process.env.MONGO_DB_CONNECTION_URL)
 
 app.post('/api/register', [validateMiddleware(validateUser)], registerController)
 app.post('/api/login', [validateMiddleware(validateUser)], loginController)
-app.get('/api/private', (req, res) => {
+app.get('/api/private', getPrivate, (req, res) => {
     res.send('You entered the private route, congrats!')
 })
 
