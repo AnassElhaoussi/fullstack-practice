@@ -9,9 +9,11 @@ module.exports = function(req, res, next) {
 
     // Verifying the given token using the token secret and sending an error if they didn't match
     try {
-        jwt.verify(token, process.env.TOKEN_SECRET)
+        const verifyToken = jwt.verify(token, process.env.TOKEN_SECRET)
+        req.token = verifyToken
         next()
     } catch {
         res.status(400).send('Invalid token')
     }
+
 }

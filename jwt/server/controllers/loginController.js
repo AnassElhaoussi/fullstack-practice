@@ -7,16 +7,23 @@ async function loginController(req, res) {
     const { name, email, password } = req.body
 
     // Checking if the user's email and name are valid
-    const user = await UserModel.findOne({ email })
-    if (!user) res.status(400).send('Email is not found')
+    UserModel.findOne({ email }).then(user => {
+        if (!user) {
+            return res.status(400).send("User doesn't exist")
+        }
+        // Checking if the password hash is the same as the one entered by the user when login
+        bcrypt.compare(password, user.password, (err, data) => {
+            if (err) throw err
+            if (data) {
+                const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET)
+                res.status(200).send(token)
+            } else {
+                res.status(400).send('Invalid password')
+            }
 
-    // Checking if the password hash is the same as the one entered by the user when login
-    const validPassword = await bcrypt.compare(password, user.password)
-    if (!validPassword) return res.status(400).send('Invalid password')
+        })
 
-    const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET)
-
-    res.status(200).send(token)
+    })
 }
 
 module.exports = loginController
