@@ -1,3 +1,9 @@
+
+/*
+ This middleware will run before
+ to check if the request body matches joi schema
+*/
+
 module.exports = (validator) => {
     return (req, res, next) => {
         const {error} = validator(req.body)
@@ -5,6 +11,5 @@ module.exports = (validator) => {
         if(error) {
             res.status(400).send(error.details[0].message)
         } else next()
-        
     }
 }
