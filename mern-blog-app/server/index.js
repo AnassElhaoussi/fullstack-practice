@@ -5,12 +5,14 @@ const blogsRouter = require('./routes/blogsRouter')
 const {ValidateUser} = require('./models/Users')
 const loginController = require('./controllers/login')
 const registerController = require('./controllers/register')
-const ValidationMiddleware = require('./middlewares/validationMiddleware')
+const refreshTokenController = require('./controllers/refresh')
 const validationMiddleware = require('./middlewares/validationMiddleware')
+
 require('dotenv').config()
 
 const PORT = process.env.PORT || 5000
 const app = express()
+const refreshTokens = {}
 
 mongoose.connect(process.env.MONGO_CONNECTION_URL)
 
@@ -24,7 +26,10 @@ app.get('/', (req, res) => {
 
 app.post('/register', validationMiddleware(ValidateUser) ,registerController)
 
-app.post('/login', validationMiddleware(ValidateUser) ,loginController)
+app.post('/login', validationMiddleware(ValidateUser) ,(req, res) => 
+loginController(req, res, refreshTokens))
 
+app.post('/refresh', (req, res) => 
+refreshTokenController(req, res, refreshTokens))
 
 app.listen(PORT, console.log('Server listening on port 5000'))
