@@ -24,12 +24,13 @@ app.get('/', (req, res) => {
     res.send('Blog app API')
 })
 
-app.post('/register', validationMiddleware(ValidateUser) ,registerController)
+app.post('/register', [validationMiddleware(ValidateUser)] ,registerController)
 
-app.post('/login', validationMiddleware(ValidateUser) ,(req, res) => 
-loginController(req, res, refreshTokens))
+app.post('/login', [validationMiddleware(ValidateUser)] , (req, res) =>
+ loginController(req, res, refreshTokens))
 
-app.post('/refresh', (req, res) => 
-refreshTokenController(req, res, refreshTokens))
+app.post('/refresh', (req, res) =>
+ refreshTokenController(req, res, refreshTokens))
+
 
 app.listen(PORT, console.log('Server listening on port 5000'))

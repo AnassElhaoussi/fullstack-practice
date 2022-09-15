@@ -15,7 +15,7 @@ const refresh = async (req, res, refreshTokens) => {
 
             const token = jwt.sign(user, 
                 process.env.REFRESH_TOKEN_SECRET,
-                {expiresIn: 300}
+                {expiresIn: '30s'}
             )
 
             res.send(token)
