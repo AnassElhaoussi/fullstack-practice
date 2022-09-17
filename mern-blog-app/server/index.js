@@ -3,7 +3,6 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const blogsRouter = require('./routes/blogsRouter')
 const {ValidateUser, UserModel} = require('./models/Users')
-const refreshTokenController = require('./controllers/refresh')
 const validationMiddleware = require('./middlewares/validationMiddleware')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -15,11 +14,14 @@ const PORT = process.env.PORT || 5000
 const app = express()
 const refreshTokens = {}
 
+console.log(refreshTokens)
+
 mongoose.connect(process.env.MONGO_CONNECTION_URL)
 
 app.use(cors())
 app.use(express.json())
 app.use('/blogs', blogsRouter)
+
 
 app.get('/', (req, res) => {
     res.send('Blog app API')
@@ -74,8 +76,6 @@ app.post('/login', [validationMiddleware(ValidateUser)] , async (req, res) => {
     const refreshToken = randtoken.uid(256)
     refreshTokens[refreshToken] = {username, email, id: foundUser._id}
     
-    console.log(refreshTokens)
-    
     res.status(200).send({
             token,
             refreshTokens
@@ -83,28 +83,27 @@ app.post('/login', [validationMiddleware(ValidateUser)] , async (req, res) => {
 })
 
 app.post('/refresh', async (req, res) => {
-    const {username, email, password} = req.body
+    const {username, email, password, refreshTokens} = req.body
     const refreshToken = req.headers['refresh-token']
 
-    console.log(refreshTokens[refreshToken])
-
+    
     if(!refreshToken) res.status(401).send('unauthorized')
     const foundUser = await UserModel.findOne({username, email})
 
-    if(
-        (refreshTokens[refreshToken] === {username, email, id: foundUser._id})) {
+    if((JSON.stringify(refreshTokens[refreshToken]) === 
+    JSON.stringify({username, email, id: foundUser.id}))) {
             const user = {
                 username,
                 email,
-            id: foundUser._id
+                id: foundUser._id
         }
 
         const refToken = jwt.sign(user, 
-            process.env.REFRESH_TOKEN_SECRET,
-            {expiresIn: '30s'}
+            process.env.ACCESS_TOKEN_SECRET,
+            {expiresIn: '40s'}
         )
 
-        res.send('hello')
+        res.send(refToken)
     }
     
 })
