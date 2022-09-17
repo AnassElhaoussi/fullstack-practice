@@ -2,11 +2,12 @@ const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const blogsRouter = require('./routes/blogsRouter')
-const {ValidateUser} = require('./models/Users')
-const loginController = require('./controllers/login')
-const registerController = require('./controllers/register')
+const {ValidateUser, UserModel} = require('./models/Users')
 const refreshTokenController = require('./controllers/refresh')
 const validationMiddleware = require('./middlewares/validationMiddleware')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const randtoken = require('rand-token')
 
 require('dotenv').config()
 
@@ -24,13 +25,89 @@ app.get('/', (req, res) => {
     res.send('Blog app API')
 })
 
-app.post('/register', [validationMiddleware(ValidateUser)] ,registerController)
+app.post('/register', [validationMiddleware(ValidateUser)] ,async (req, res) => {
+    // Getting the req body and generating both the salt and hashed password
+    const { username,
+            email,
+            password
+        } = req.body
+    const salt = await bcrypt.genSalt(10)
+    const passwordHash = await bcrypt.hash(password, salt)
 
-app.post('/login', [validationMiddleware(ValidateUser)] , (req, res) =>
- loginController(req, res, refreshTokens))
+    // Mongodb schema validation will work if the email is duplicated
+    // else the new user will be saved in the db
+    try {
+        const newUser = new UserModel({
+            username,
+            email, 
+            password: passwordHash
+        })
+        const user = await newUser.save()
+        res.send(user)
+    } catch {
+        res.status(400).send('email already in use')
+    }
+})
 
-app.post('/refresh', (req, res) =>
- refreshTokenController(req, res, refreshTokens))
+app.post('/login', [validationMiddleware(ValidateUser)] , async (req, res) => {
+
+    // Getting the body
+    const {username, email, password} = req.body
+    
+    // Checking if the current email and username 
+    // exists in some collection in the database
+    const foundUser = await UserModel
+    .findOne({username ,email})
+    
+    if(!foundUser) return res.status(400).send('No user found')
+    
+    // Checking if the password is the same
+    const isSamePassword = await bcrypt
+    .compare(password, foundUser.password)
+    
+    if(!isSamePassword) return res.status(400).send('Password is wrong')
+    // Generating a json web token
+    const token = jwt.sign({username, email, id: foundUser._id},
+    process.env.ACCESS_TOKEN_SECRET,
+    {expiresIn: '40s'})
+    
+    const refreshToken = randtoken.uid(256)
+    refreshTokens[refreshToken] = {username, email, id: foundUser._id}
+    
+    console.log(refreshTokens)
+    
+    res.status(200).send({
+            token,
+            refreshTokens
+    })
+})
+
+app.post('/refresh', async (req, res) => {
+    const {username, email, password} = req.body
+    const refreshToken = req.headers['refresh-token']
+
+    console.log(refreshTokens[refreshToken])
+
+    if(!refreshToken) res.status(401).send('unauthorized')
+    const foundUser = await UserModel.findOne({username, email})
+
+    if(
+        (refreshTokens[refreshToken] === {username, email, id: foundUser._id})) {
+            const user = {
+                username,
+                email,
+            id: foundUser._id
+        }
+
+        const refToken = jwt.sign(user, 
+            process.env.REFRESH_TOKEN_SECRET,
+            {expiresIn: '30s'}
+        )
+
+        res.send('hello')
+    }
+    
+})
 
 
 app.listen(PORT, console.log('Server listening on port 5000'))
