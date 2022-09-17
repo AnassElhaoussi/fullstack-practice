@@ -23,12 +23,15 @@ const loginController = async (req, res, refreshTokens) => {
         const token = jwt.sign({username, email, id: foundUser._id},
         process.env.ACCESS_TOKEN_SECRET,
         {expiresIn: '40s'})
+        
         const refreshToken = randtoken.uid(256)
         refreshTokens[refreshToken] = {username, email, id: foundUser._id}
 
+        console.log(refreshTokens)
+
         res.status(200).send({
                 token,
-                refreshToken
+                refreshTokens
         })
 
 }
