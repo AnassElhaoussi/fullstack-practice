@@ -78,6 +78,7 @@ app.post('/login', [validationMiddleware(ValidateUser)] , async (req, res) => {
     
     res.status(200).send({
             token,
+            refreshToken,
             refreshTokens
     })
 })
