@@ -23,7 +23,7 @@ const Register = () => {
           <Heading
           as='h3' size='lg' fontWeight={800}
           >Register an account</Heading>
-          <Divider border='8px' borderRadius='1rem' width='10%' borderColor='blue' />
+          <Divider borderColor='blue' border='8px' borderRadius='1rem' width='10%' />
         </Stack>
         <Stack gap='0.5rem'>
           <InputGroup>
