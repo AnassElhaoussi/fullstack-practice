@@ -33,24 +33,28 @@ const Login = () => {
         </Flex>
         <Stack gap='0.3rem'>
           <InputGroup>
-            <InputLeftElement children={<FontAwesomeIcon icon={faUser} />} />
+            <InputLeftElement 
+            children={<FontAwesomeIcon icon={faUser} />} />
             <Input 
             placeholder='Enter your username' 
             type='text' focusBorderColor='red.400' />
           </InputGroup>
           <InputGroup>
-            <InputLeftElement children={<FontAwesomeIcon icon={faEnvelope} />} />
+            <InputLeftElement 
+            children={<FontAwesomeIcon icon={faEnvelope} />} />
             <Input 
             placeholder='Enter your email'
             type='text' focusBorderColor='red.400' />
           </InputGroup>
           <InputGroup>
-            <InputLeftElement children={<FontAwesomeIcon icon={faLock} />} />
+            <InputLeftElement 
+            children={<FontAwesomeIcon icon={faLock} />} />
             <Input placeholder='Enter your password' 
             type={isPasswordShown ? 'text' : 'password'} 
             focusBorderColor='red.400' />
             <InputRightElement 
-            children={<FontAwesomeIcon icon={isPasswordShown ? faEyeSlash : faEye} />} 
+            children=
+            {<FontAwesomeIcon icon={isPasswordShown ? faEyeSlash : faEye} />} 
             cursor='pointer'
             onClick={() => setIsPasswordShown(!isPasswordShown)}
             userSelect='none'
