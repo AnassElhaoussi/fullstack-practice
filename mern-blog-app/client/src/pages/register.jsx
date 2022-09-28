@@ -2,9 +2,31 @@ import React, {useState} from 'react'
 import {Heading, Button, Divider, Stack, Input, InputGroup, InputLeftElement, InputRightElement} from '@chakra-ui/react'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faUserPlus, faKeyboard, faEnvelope, faLock, faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+
 
 const Register = () => {
   const [isPasswordShown, setIsPasswordShown] = useState(false)
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const navigate = useNavigate()
+  
+  const usernameChange = (event) => setUsername(event.target.value)
+  const emailChange = (event) => setEmail(event.target.value)
+  const passwordChange = (event) => setPassword(event.target.value)
+  
+  const handleRegisterSubmit = async () => {
+    try {
+      await axios.post('http://localhost:5000/register',
+      {username, email, password})
+      return navigate('/login')
+    } catch(error) {
+      console.log(error.response.data)
+    }
+  }
+
   return (
     <div className='flex w-full'>
       <div className='bg-topography'></div>
@@ -33,7 +55,10 @@ const Register = () => {
             <Input 
             type='text' 
             placeholder='Enter a username' 
-            focusBorderColor='blueviolet' />
+            focusBorderColor='blueviolet'
+            value={username}
+            onChange={usernameChange}
+            />
           </InputGroup>
           <InputGroup>
             <InputLeftElement 
@@ -43,6 +68,8 @@ const Register = () => {
             type='email' 
             placeholder='Enter an email'
             focusBorderColor='blueviolet'
+            value={email}
+            onChange={emailChange}
             />
           </InputGroup>
           <InputGroup>
@@ -53,6 +80,8 @@ const Register = () => {
             type={isPasswordShown ? 'text' : 'password'}
             placeholder='Create a password'
             focusBorderColor='blueviolet'
+            value={password}
+            onChange={passwordChange}
             />
             <InputRightElement 
             cursor='pointer' 
@@ -63,7 +92,20 @@ const Register = () => {
             userSelect='none'
             />
           </InputGroup>
-          <Button colorScheme='purple' className='shadow-lg'>Submit</Button>
+          <Button 
+          colorScheme='purple' 
+          className='shadow-lg'
+          onClick={handleRegisterSubmit}
+          >Submit</Button>
+          <Heading 
+          as='p' 
+          size='xs' 
+          textAlign='start'
+          fontWeight='400'
+          color='gray.400'
+          >
+              Already have an account ? <Link to='/login' className='underline'>Login</Link>
+          </Heading>
         </Stack>
       </Stack>
     </div>

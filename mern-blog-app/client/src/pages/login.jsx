@@ -31,7 +31,7 @@ const Login = () => {
           border='8px' 
           borderRadius='1rem' width='10%' />
         </Flex>
-        <Stack gap='0.3rem'>
+        <Stack gap='0.5rem'>
           <InputGroup>
             <InputLeftElement 
             children={<FontAwesomeIcon icon={faUser} />} />
@@ -66,7 +66,7 @@ const Login = () => {
           <Heading 
           as='p' 
           size='xs' 
-          fontWeight={400} color='gray.500' paddingTop={1}>
+          fontWeight={400} color='gray.400' paddingTop={1}>
               Don't have an account ? 
               <Link to='/register' className='underline'> Register</Link> 
           </Heading>
