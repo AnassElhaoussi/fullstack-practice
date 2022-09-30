@@ -7,20 +7,11 @@ const baseURL = axios.create({
     }
 })
 
-export const loginUser = async () => {
-    try {
-        const response = await baseURL.post('/login')
-        return response
-    } catch (error) {
-        console.log(error)
-    }
+export const loginUser = async (username, email, password) => {
+    return await baseURL.post('/login', {username, email, password})
 }
 
-export const registerUser = async () => {
-    try {
-        const response = await baseURL.post('/register')
-        return response
-    } catch(error) {
-        console.log(error)
-    }
+export const registerUser = async (username, email, password) => {
+    return await baseURL.post('/register',{username, email, password})
+
 }

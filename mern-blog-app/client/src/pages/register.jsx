@@ -2,30 +2,19 @@ import React, {useState} from 'react'
 import {Heading, Button, Divider, Stack, Input, InputGroup, InputLeftElement, InputRightElement} from '@chakra-ui/react'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faUserPlus, faKeyboard, faEnvelope, faLock, faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons'
-import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-
+import { Link } from 'react-router-dom'
+import { useRegisterMutation } from '../helpers/auth'
 
 const Register = () => {
+  const {isLoading, isError, error, mutate} = useRegisterMutation()
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const navigate = useNavigate()
   
   const usernameChange = (event) => setUsername(event.target.value)
   const emailChange = (event) => setEmail(event.target.value)
   const passwordChange = (event) => setPassword(event.target.value)
-  
-  const handleRegisterSubmit = async () => {
-    try {
-      await axios.post('http://localhost:5000/register',
-      {username, email, password})
-      return navigate('/login')
-    } catch(error) {
-      console.log(error.response.data)
-    }
-  }
 
   return (
     <div className='flex w-full'>
@@ -95,7 +84,7 @@ const Register = () => {
           <Button 
           colorScheme='purple' 
           className='shadow-lg'
-          onClick={handleRegisterSubmit}
+          onClick={() => mutate(username, email, password)}
           >Submit</Button>
           <Heading 
           as='p' 
@@ -104,7 +93,8 @@ const Register = () => {
           fontWeight='400'
           color='gray.400'
           >
-              Already have an account ? <Link to='/login' className='underline'>Login</Link>
+              Already have an account ? 
+              <Link to='/login' className='underline'>Login</Link>
           </Heading>
         </Stack>
       </Stack>
