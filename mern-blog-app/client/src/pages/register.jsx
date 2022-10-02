@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Heading, Button, Divider, Stack, Input, InputGroup, InputLeftElement, InputRightElement} from '@chakra-ui/react'
+import {Heading, Button, Text, CircularProgress, Divider, Stack, Input, InputGroup, InputLeftElement, InputRightElement} from '@chakra-ui/react'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faUserPlus, faKeyboard, faEnvelope, faLock, faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
@@ -37,6 +37,9 @@ const Register = () => {
           <Divider borderColor='blue' border='8px' borderRadius='1rem' width='10%' />
         </Stack>
         <Stack gap='0.5rem'>
+          {isError && 
+          <Text fontSize='md' textAlign='start' 
+          color='red.500'>{error}</Text>}
           <InputGroup>
             <InputLeftElement 
             pointerEvents='none' 
@@ -84,8 +87,11 @@ const Register = () => {
           <Button 
           colorScheme='purple' 
           className='shadow-lg'
-          onClick={() => mutate(username, email, password)}
-          >Submit</Button>
+          onClick={() => {
+            mutate({username, email, password})
+          }}
+          >{!isLoading ? 'Submit' : <CircularProgress isIndeterminate
+           color='white' size='20px' />} </Button>
           <Heading 
           as='p' 
           size='xs' 
