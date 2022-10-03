@@ -3,6 +3,7 @@ import Login from './pages/login.jsx'
 import Register from './pages/register'
 import {ChakraProvider} from '@chakra-ui/react'
 import {extendTheme} from '@chakra-ui/react'
+import {AuthContextProvider} from './Context/AuthContext'
 
 const theme = extendTheme({
   fonts: {
@@ -13,6 +14,7 @@ const theme = extendTheme({
 
 function App(){
   return (
+    <AuthContextProvider>
         <ChakraProvider theme={theme}>
           <BrowserRouter>
             <Routes>
@@ -21,6 +23,7 @@ function App(){
             </Routes>
           </BrowserRouter>
         </ChakraProvider>
+    </AuthContextProvider>
   )
 }
 

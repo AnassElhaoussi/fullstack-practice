@@ -8,13 +8,19 @@ import { useRegisterMutation } from '../helpers/auth'
 const Register = () => {
   const {isLoading, isError, error, mutate} = useRegisterMutation()
   const [isPasswordShown, setIsPasswordShown] = useState(false)
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [credentials, setCredentials] = useState({
+    username: "",
+    email: "",
+    password: ""
+  })
   
-  const usernameChange = (event) => setUsername(event.target.value)
-  const emailChange = (event) => setEmail(event.target.value)
-  const passwordChange = (event) => setPassword(event.target.value)
+  const onChangeHandler = (e) => {
+    const value = e.target.value
+    setCredentials(prev => ({
+      ...prev,
+      [e.target.name]: value
+    }))
+  } 
 
   return (
     <div className='flex w-full'>
@@ -48,8 +54,9 @@ const Register = () => {
             type='text' 
             placeholder='Enter a username' 
             focusBorderColor='blueviolet'
-            value={username}
-            onChange={usernameChange}
+            name='username'
+            value={credentials.username}
+            onChange={onChangeHandler}
             />
           </InputGroup>
           <InputGroup>
@@ -57,11 +64,12 @@ const Register = () => {
             pointerEvents='none' 
             children={<FontAwesomeIcon icon={faEnvelope} />} />
             <Input 
-            type='email' 
+            type='email'
+            name='email'
             placeholder='Enter an email'
             focusBorderColor='blueviolet'
-            value={email}
-            onChange={emailChange}
+            value={credentials.email}
+            onChange={onChangeHandler}
             />
           </InputGroup>
           <InputGroup>
@@ -70,10 +78,11 @@ const Register = () => {
             children={<FontAwesomeIcon icon={faLock} />} />
             <Input 
             type={isPasswordShown ? 'text' : 'password'}
+            name='password'
             placeholder='Create a password'
             focusBorderColor='blueviolet'
-            value={password}
-            onChange={passwordChange}
+            value={credentials.password}
+            onChange={onChangeHandler}
             />
             <InputRightElement 
             cursor='pointer' 
@@ -88,7 +97,7 @@ const Register = () => {
           colorScheme='purple' 
           className='shadow-lg'
           onClick={() => {
-            mutate({username, email, password})
+            mutate(credentials)
           }}
           >{!isLoading ? 'Submit' : <CircularProgress isIndeterminate
            color='white' size='20px' />} </Button>
